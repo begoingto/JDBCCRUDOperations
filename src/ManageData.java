@@ -55,11 +55,12 @@ public class ManageData {
 
     public static Topic updateTopic(Connection conn, Topic topic){
         try{
-            String sql = "UPDATE topics SET name=?, description=?,status=? WHERE id="+ topic.getId();
+            String sql = "UPDATE topics SET name=?, description=?,status=? WHERE id=?";
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setString(1,topic.getName());
             statement.setString(2,topic.getDescription());
             statement.setBoolean(3,topic.isStatus());
+            statement.setInt(4,topic.getId());
             int count = statement.executeUpdate();
             System.out.println("""
                     ****************************************************
@@ -75,8 +76,9 @@ public class ManageData {
 
     public static boolean deleteTopic(Connection conn, Integer id){
         try{
-            String sql = "DELETE FROM topics WHERE id="+ id;
+            String sql = "DELETE FROM topics WHERE id=?";
             PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1,id);
             int count = statement.executeUpdate();
             if (count==1){
                 System.out.println("""
@@ -94,8 +96,9 @@ public class ManageData {
 
     public static Topic selectTopicById(Connection conn, Integer id){
         try{
-            String sql = "SELECT * FROM topics WHERE id="+ id;
+            String sql = "SELECT * FROM topics WHERE id=?";
             PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1,id);
             ResultSet resultSet =  statement.executeQuery();
             if (resultSet.next()){
                 Integer gid = resultSet.getInt("id");
@@ -113,8 +116,9 @@ public class ManageData {
     public static List<Topic> selectTopicByName(Connection conn, String name){
         List<Topic> topics = new ArrayList<>();
         try{
-            String sql = "SELECT * FROM topics WHERE name ILIKE '%"+ name+"%'";
+            String sql = "SELECT * FROM topics WHERE name ILIKE ?";
             PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1,"%"+ name +"%");
             ResultSet resultSet =  statement.executeQuery();
             while (resultSet.next()){
                 Integer id = resultSet.getInt("id");
